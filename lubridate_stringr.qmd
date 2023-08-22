@@ -1,0 +1,184 @@
+---
+title: "lubridate & srtingr"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+```
+
+## Date-times with {lubridate}
+
+ymd: if date is in year-month-day
+
+mdy: if date is in month-day-year
+
+dmy: if date is in day-month-year
+
+```{r}
+my_date <- "03-15-1998" # R recognizes this as a string
+class(my_date)
+
+my_date2 <- mdy(my_date) # output now recognized as a date
+my_date2
+class(my_date2)
+
+## lubridate will recognize character dates as well
+my_date3 <- "08-Jun-1974"
+
+my_date3 <- dmy(my_date3)
+my_date3
+
+## and numeric dates with no dashes
+my_date4 <- "20041003"
+
+my_date4 <- ymd(my_date4)
+my_date4
+```
+
+-   Make sure to give it the function with the right sequence
+
+```{r}
+#my_date5 <- "06202001"
+
+#my_date5 <- dmy(my_date5)
+# Warning message:
+# All formats failed to parse. No formats found. 
+```
+
+#### Adding times to dates
+
+```{r}
+time1 <- "2020-08-12 11:18"
+ymd_hm(time1)
+```
+
+```{r}
+time2 <- "june 2 1982 4:00pm"
+mdy_hm(time2)
+```
+
+#### With time zones
+
+-   with_tz()
+
+```{r}
+time2 <- mdy_hm(time2)
+with_tz(time2, "America/Los_Angeles")
+
+with_tz(time2, "NZ-CHAT")
+```
+
+#### Look at the time now and convert to other time zones
+
+```{r}
+now <- Sys.time()
+now
+
+nowEB <- with_tz(Sys.time(), "Europe/Belgrade")
+nowEB
+```
+
+#### Access different parts of date-time
+
+```{r}
+day(now)
+week(now)
+month(now)
+year(now)
+hour(now)
+minute(now)
+second(now)
+```
+
+#### Working in a data frame
+
+```{r}
+urchin_counts <- data.frame(
+  date = c("oct 12 2004", "october 18 2007", "feb 12 2003", "February 14, 2008"),
+  species = c("purple", "red", "red", "red"),
+  size = c(19, 24, 18, 11)
+)
+class(urchin_counts$date)
+```
+
+```{r}
+urchin_mean_by_month <- urchin_counts %>%
+  mutate(date = mdy(date),
+         month = month(date)) %>%
+  group_by(month) %>%
+  summarise(mean = mean(size))
+urchin_mean_by_month
+```
+
+## Strings with {stringr}
+
+str\_ detect()
+
+```{r}
+bird_string <- "birds are really cool and have wings"
+```
+
+```{r}
+str_detect(bird_string, pattern = "wings")
+
+str_detect(bird_string, pattern = "arms")
+```
+
+-   can also pipe into a string detect
+
+```{r}
+bird_string2 <- c("wings", "feet", "feathers", "Beak")
+
+str_detect(bird_string2, pattern = "wings")
+#str_detect is case sensitive
+#convert everything tolower() to make it easier
+```
+
+Keep rows if name contains "Skywalker"
+
+```{r}
+starwars %>%
+  filter(str_detect(name, pattern = "Skywalker"))
+```
+
+String replace
+
+```{r}
+starwars %>%
+  mutate(name_new = str_replace(name, pattern = "Sky", replacement = "Fire")) %>%
+  select(name, name_new)
+```
+
+- str_trim() to get rid of leading and trailing white space
+
+- str_squish() to get rid of leading and trailing white space and excess interior white space
+
+```{r}
+bird_string3 <- "      Hi I'm a   bird !!!   "
+```
+
+```{r}
+str_trim(bird_string3)
+
+str_squish(bird_string3)
+```
+
+```{r}
+str_to_lower(bird_string3)
+str_to_upper(bird_string3)
+str_to_title(bird_string3)
+str_to_sentence(bird_string3)
+
+str_squish(str_to_upper(bird_string3))
+```
+
+Within mutate
+
+```{r}
+starwars %>% 
+  mutate(species_lower = str_to_lower(species)) %>%
+  select(species, species_lower)
+```
+
