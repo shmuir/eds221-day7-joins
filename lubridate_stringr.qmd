@@ -151,9 +151,9 @@ starwars %>%
   select(name, name_new)
 ```
 
-- str_trim() to get rid of leading and trailing white space
+-   str_trim() to get rid of leading and trailing white space
 
-- str_squish() to get rid of leading and trailing white space and excess interior white space
+-   str_squish() to get rid of leading and trailing white space and excess interior white space
 
 ```{r}
 bird_string3 <- "      Hi I'm a   bird !!!   "
@@ -181,4 +181,3 @@ starwars %>%
   mutate(species_lower = str_to_lower(species)) %>%
   select(species, species_lower)
 ```
-
