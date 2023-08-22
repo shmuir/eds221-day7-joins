@@ -1,0 +1,45 @@
+---
+title: "Joins"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+```
+
+## Data Wrangling Refresher
+
+```{r}
+penguins %>%
+  filter(island == "Dream" | island == "Biscoe") %>% #filter(island %in% c("Dream", "Biscoe"))
+  select(-c(sex, year)) %>%
+  mutate(body_mass_kg = body_mass_g / 1000) %>%
+  rename(location = island)
+```
+
+```{r}
+penguins %>%
+  filter(species == "Adelie") %>%
+  drop_na(flipper_length_mm, sex) %>%
+  group_by(sex) %>%
+  summarise(mean = mean(flipper_length_mm), 
+            sd = sd(flipper_length_mm), 
+            sample_size = n())
+```
+
+```{r}
+penguins %>%
+  count(species, island, sex, name = "sample_size")
+```
+
+
+
+
+
+
+
+
+
+
